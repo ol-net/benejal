@@ -133,7 +133,15 @@ public class MT940parser implements KontoauszugParser {
 		try {
 
 			wertStellDatum = df.parse(f61.substring(0, 6));
-			buchungsDatum = df2.parse(f61.substring(6, 10));
+			
+			// TODO 1.1 dieses Feld ist optional
+//			try {
+	
+				buchungsDatum = df2.parse(f61.substring(6, 10));
+	
+//			} catch (ParseException e) {
+//				e.printStackTrace();
+//			}
 			
 			buchungsDatum.setYear(wertStellDatum.getYear());
 			
@@ -142,6 +150,7 @@ public class MT940parser implements KontoauszugParser {
 			}
 			
 //			System.out.println(datum);
+			// TODO 1.2 in Abhängigkeit von df2 behandeln
 			f61 = f61.substring(10);
 			
 		} catch (ParseException e) {
@@ -153,7 +162,15 @@ public class MT940parser implements KontoauszugParser {
 		if(f61.startsWith("C")) {
 			haben = true;
 		}
-		f61 = f61.substring(2);
+		
+//		System.out.println("char at 1: " + f61.toUpperCase().charAt(1));
+		// und hier war bug :), dises Feld ist auch optional
+		if (f61.toUpperCase().charAt(1) == 'R') {
+			f61 = f61.substring(2);
+		}
+		else {
+			f61 = f61.substring(1);
+		}
 		
 		// Betrag
 		String b = f61.substring(0, f61.indexOf('N'));
