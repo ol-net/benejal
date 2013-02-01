@@ -43,12 +43,14 @@ public class SoftwareInfo extends JFrame implements ActionListener {
 		mainpanel.setOpaque(false);
 		setTitle("Informationen zu diesem Programm");
 		setLayout(new BorderLayout());
-		setMinimumSize(new Dimension(500, 230)); 
+		setMinimumSize(new Dimension(500, 280)); 
 		
 		mainpanel.add(new JLabel(" "));
-		mainpanel.add(new JLabel("Software für gemeinnützige Fördervereine Version 2.0"));
+		mainpanel.add(new JLabel("Benejal - Software für gemeinnützige Fördervereine Version 2.0.2"));
 		mainpanel.add(new JLabel(" "));
 		mainpanel.add(new JLabel("(c) Copyright 2010 Universität Osnabrück. Alle Rechte vorbehalten."));
+		mainpanel.add(new JLabel(" "));
+		mainpanel.add(new JLabel("(c) Copyright 2013 www.benejal.de. Alle Rechte vorbehalten."));
 		mainpanel.add(new JLabel(" "));
 		mainpanel.add(new JLabel("Autoren: Artem Petrov (artpetro@uos.de) & Leonid Oldenburger (loldenbu@uos.de)"));
 		mainpanel.add(new JLabel(" "));

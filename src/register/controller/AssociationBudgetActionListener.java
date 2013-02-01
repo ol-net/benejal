@@ -149,12 +149,14 @@ public class AssociationBudgetActionListener implements ActionListener{
 		if (associationBudget != null){
 			if (associationBudget.getSaveButton() == event.getSource()) {
 				try {
-					//update purpose db
-					new_receipt.setObject1(associationBudget.getPurposeText());
-			        association_data_transfer.updateReceipt(new_receipt);
 					if(associationbudget.getAccountNumber().getText().length() >= 3 && associationbudget.getBankCode().getText().length() >= 3){
+
 						association_data_transfer.updateAssociationBudget(association_object);
 						
+						//update purpose db
+						new_receipt.setObject1(associationBudget.getPurposeText());
+				        association_data_transfer.updateReceipt(new_receipt);
+				        
 						new InfoDialog("Vereinsdaten gespeichert");
 					}else{
 						new InfoDialog("Bitte füllen Sie die Pflichtfelder aus (min. 3 Zeichen)!");
