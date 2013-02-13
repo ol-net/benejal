@@ -46,7 +46,7 @@ public class SoftwareInfo extends JFrame implements ActionListener {
 		setMinimumSize(new Dimension(500, 280)); 
 		
 		mainpanel.add(new JLabel(" "));
-		mainpanel.add(new JLabel("Benejal - Software für gemeinnützige Fördervereine Version 2.0.2"));
+		mainpanel.add(new JLabel("Benejal - Software für gemeinnützige Fördervereine Version 2.0.3"));
 		mainpanel.add(new JLabel(" "));
 		mainpanel.add(new JLabel("(c) Copyright 2010 Universität Osnabrück. Alle Rechte vorbehalten."));
 		mainpanel.add(new JLabel(" "));
