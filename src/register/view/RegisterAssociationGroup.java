@@ -153,7 +153,7 @@ public class RegisterAssociationGroup extends BackgroundPanel implements Observe
 		GridBagConstraints b = new GridBagConstraints();
 		b.fill=GridBagConstraints.HORIZONTAL;
 
-		b.insets =new Insets(196,2,2,2);
+		b.insets =new Insets(186,2,2,2);
 		
 		b.gridx=0;
 		b.gridy=0;

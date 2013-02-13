@@ -77,8 +77,11 @@ public class AddMemberBudget extends JPanel implements Observer {
 	private JTextField member_accountowner;
 	private JTextField member_accountnumber;
 	private JTextField member_bankcode;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_group;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_status;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_contribution_form;
 	
 	// JButton
@@ -191,6 +194,7 @@ public class AddMemberBudget extends JPanel implements Observer {
 	 * 
 	 * @param layout
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void makeBlank(DesignGridLayout layout){
 			
 		group = association_data_transfer.getGroup();

@@ -94,6 +94,7 @@ public class AddMemberData extends JPanel{
 	private AssociationDataTransfer association_data_transfer;
 	
 	public AddMemberData(Member amember, KassenBuch moneyBook, AssociationDataTransfer adatatrans){
+				
 		this.association_member = amember;
 		
 		this.money_book = moneyBook;
@@ -106,7 +107,6 @@ public class AddMemberData extends JPanel{
 	 * constructor for gui to add a member.
 	 */
 	public AddMemberData(MemberAndDonatorFrame frame, AddMember amember, ManageMembers managem, Member associationMember, KassenBuch moneyBook, AssociationDataTransfer adatatrans){
-		
 		this.mainframe = frame;
 		this.addmember = amember;
 		this.managemembers = managem;

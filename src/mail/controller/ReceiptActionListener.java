@@ -71,7 +71,8 @@ public class ReceiptActionListener implements ActionListener{
 	 * @param moneyBook
 	 * @param adatatrans
 	 */
-	public ReceiptActionListener(MView amailview, MassDonationReceipt rview, KassenBuch moneyBook, AssociationDataTransfer adatatrans){
+	public ReceiptActionListener(MView amailview, MassDonationReceipt rview, KassenBuch moneyBook, AssociationDataTransfer adatatrans)
+	{
 		this.association_data_transfer = adatatrans;
 		this.allmailview = amailview;
 		this.one_receipt_view = null;
@@ -135,7 +136,7 @@ public class ReceiptActionListener implements ActionListener{
 			
 			if (receiptview.getSaveButton() == event.getSource()) {
 				try {
-
+					
 					dateNow = new Date();
 					SimpleDateFormat dateformatMMDDYYYY = new SimpleDateFormat("dd.MM.yyyy");
 					StringBuilder nowMMDDYYYY = new StringBuilder(dateformatMMDDYYYY.format(dateNow));
@@ -156,11 +157,11 @@ public class ReceiptActionListener implements ActionListener{
 					createReceipt();
 					new_receipt.setMemberGroup(group);
 					new_receipt.setDate(nowMMDDYYYY.toString());
-
-					new MassReceipt(new_receipt, group, receiptview.getMemberGroup(), -10);
+					
+					new MassReceipt(new_receipt, group, receiptview.getMemberGroup(), -10, receiptview.getDonationDate());
 			
 					association_data_transfer.setReceipt(new_receipt);
-		        
+					
 				} catch (Exception e) {
 				}
 			}
@@ -168,7 +169,7 @@ public class ReceiptActionListener implements ActionListener{
 		
 		if(one_receipt_view != null){
 			
-			if (one_receipt_view.getBButton() == event.getSource()) {
+			if (one_receipt_view.getBButton2() == event.getSource()) {
 				try {
 					if(donator_information == null){
 						member_information.removePanel();
@@ -181,7 +182,7 @@ public class ReceiptActionListener implements ActionListener{
 				}
 			}
 			
-			if (one_receipt_view.getNButton() == event.getSource()) {
+			if (one_receipt_view.getNButton2() == event.getSource()) {
 				try {
 			        
 					dateNow = new Date();
@@ -202,9 +203,9 @@ public class ReceiptActionListener implements ActionListener{
 					new_receipt.setDate(nowMMDDYYYY.toString());
 
 					if(donator_information == null){
-						new MassReceipt(new_receipt, name, -1, member_information.getMemberID());
+						new MassReceipt(new_receipt, name, -1, member_information.getMemberID(), one_receipt_view.getMemberDonationDate());
 					}else if(member_information == null){
-						new MassReceipt(new_receipt, name, -1, donator_information.getDonatorID());
+						new MassReceipt(new_receipt, name, -1, donator_information.getDonatorID(), one_receipt_view.getDonatorDonationDate());
 					}
 			
 					association_data_transfer.setReceipt(new_receipt);

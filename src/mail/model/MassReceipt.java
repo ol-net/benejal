@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import association.model.Association;
 import association.model.AssociationDataTransfer;
@@ -70,7 +71,7 @@ public class MassReceipt{
 	private Member association_member;
 	
 	private DonatorWithAdress association_donator;
-	
+
 	@SuppressWarnings("unused")
 	private TextLine mailtext;
 	
@@ -126,6 +127,12 @@ public class MassReceipt{
 	private Date endDate;
 	private String member_id;
 	
+	private Double summe;
+	
+	private Table table;
+	
+	private int year;
+	
 	/**
 	 * constructor creates a pdf file
 	 * 
@@ -137,8 +144,10 @@ public class MassReceipt{
 	 * @param moneyBook
 	 * @throws Exception
 	 */
-	public MassReceipt(Receipt newReceipt, String group, int memGroup, int mem_id) throws Exception {
+	@SuppressWarnings("static-access")
+	public MassReceipt(Receipt newReceipt, String group, int memGroup, int mem_id, int year) throws Exception {
 		
+		this.year = year+1;
 		this.new_receipt = newReceipt;
 		this.association_group = memGroup;
 		this.association_data_transfer = AssociationDataTransfer.getInstance();
@@ -160,10 +169,14 @@ public class MassReceipt{
 		this.interval = new Interval(association_data_transfer);
 		
 		Calendar calendarNowDate = Calendar.getInstance();
+
 		calendarNowDate.setTime(new Date());
 		
-		if(calendarNowDate.get(Calendar.MONTH) == 0 || calendarNowDate.get(Calendar.MONTH) == 1 || calendarNowDate.get(Calendar.MONTH) == 2){
-			
+		calendarNowDate.set(this.year, calendarNowDate.MONTH, calendarNowDate.DATE);
+		
+		//if(calendarNowDate.get(Calendar.MONTH) == 0 || calendarNowDate.get(Calendar.MONTH) == 1 || calendarNowDate.get(Calendar.MONTH) == 2){
+		if(true){
+		
 			String start_string_date = "01.01." + new Integer(calendarNowDate.get(Calendar.YEAR)-1).toString();
 			String end_string_date = "31.12." + new Integer(calendarNowDate.get(Calendar.YEAR)-1).toString();
 			
@@ -183,10 +196,12 @@ public class MassReceipt{
 			this.beginnDate = sdate;
 			this.endDate = edate;
 			
-		}else{
-			this.beginnDate = interval.getStartDate();
-			this.endDate = interval.getEndDate();
 		}
+		
+		//else{
+			//this.beginnDate = interval.getStartDate();
+			//this.endDate = interval.getEndDate();
+		//}
 
 		if(association_data_transfer.getReceiptDate(people_group) != null){
 			try{
@@ -296,18 +311,22 @@ public class MassReceipt{
 			Map.Entry<Integer, Member> entry = i.next();
 			
 			association_member = entry.getValue();
-			
-			page = new Page(pdf, Letter.PORTRAIT);
 
-			makeHeader();
-	        
 			makeContributionView();  
 			
-			makeMainPart();
+			if(summe != 0.00)
+			{
+				page = new Page(pdf, Letter.PORTRAIT);
+
+		        table.drawOn(page);	
+				makeHeader();
+		        			
+				makeMainPart();
 			
-			x = 85;
-			y = 500;
-	        makeFooter();
+				x = 85;
+				y = 500;
+		        makeFooter();
+			}
 		}   
 	}
 	
@@ -331,18 +350,23 @@ public class MassReceipt{
 			association_donator = entry.getValue();
 			
 			if(association_donator.getNumber() > 20000){
-			
-				page = new Page(pdf, Letter.PORTRAIT);
-
-				makeHeader();
-
+				
 				makeContributionView();  
+				
+				if(summe != 0.00)
+				{
+					page = new Page(pdf, Letter.PORTRAIT);
+	
+			        table.drawOn(page);	
 
-				makeMainPart();
-			
-				x = 85;
-				y = 500;
-				makeFooter();
+					makeHeader();
+		
+					makeMainPart();
+				
+					x = 85;
+					y = 500;
+					makeFooter();
+				}
 			}
 		}   
 	}
@@ -538,7 +562,7 @@ public class MassReceipt{
 	 */
 	public void makeContributionView() throws Exception{
 
-		Table table = new Table(f1, f2);
+		table = new Table(f1, f2);
 		
 		if(association_group == 1){
 			this.donation_list = money_book.getDonations(association_donator.getNumber());
@@ -566,11 +590,12 @@ public class MassReceipt{
 		
         double sum = 0;
         
+        // Nur Mitglied
         if(association_group == 1){
         	for (Spende item: donation_list) {
         		
 				List<Cell> row2 = new ArrayList<Cell>();
-
+    			
 				if(item.getDatum().getTime() >= beginnDate.getTime() && item.getDatum().getTime() <= endDate.getTime()){
 					row2.add(new Cell(f2, df.format(item.getBetrag())+ "  " +association_data_transfer.getAssociation().getFinacneOffice().getCurrency()));
 					row2.add(new Cell(f2, new RuleBasedNumberFormat(RuleBasedNumberFormat.SPELLOUT).format(item.getBetrag())));
@@ -585,6 +610,7 @@ public class MassReceipt{
 					sum = sum + item.getBetrag();
 				}
         	}
+         // Spender und Mitglied
         }else if(association_group == -1){
         	
         	int id = Integer.parseInt(member_id);
@@ -592,6 +618,7 @@ public class MassReceipt{
         	if(id < 20000){
     			for (Beitrag item: paylist) {
     				List<Cell> row2 = new ArrayList<Cell>();
+    				
     				if(item.getDatum().getTime() >= beginnDate.getTime() && item.getDatum().getTime() <= endDate.getTime()){
     					row2.add(new Cell(f2, df.format(item.getBetrag())+ "  " +association_data_transfer.getAssociation().getFinacneOffice().getCurrency()));
     					row2.add(new Cell(f2, new RuleBasedNumberFormat(RuleBasedNumberFormat.SPELLOUT).format(item.getBetrag())));
@@ -624,6 +651,7 @@ public class MassReceipt{
             				sum = sum + item.getBetrag();
             			}
             	}
+            // Nur Spender
         	}else if(id >= 20000){
             	for (Spende item: donation_list) {
             		
@@ -647,6 +675,7 @@ public class MassReceipt{
 		}else{
 			for (Beitrag item: paylist) {
 				List<Cell> row2 = new ArrayList<Cell>();
+				
 				if(item.getDatum().getTime() >= beginnDate.getTime() && item.getDatum().getTime() <= endDate.getTime()){
 					row2.add(new Cell(f2, df.format(item.getBetrag())+ "  " +association_data_transfer.getAssociation().getFinacneOffice().getCurrency()));
 					row2.add(new Cell(f2, new RuleBasedNumberFormat(RuleBasedNumberFormat.SPELLOUT).format(item.getBetrag())));
@@ -666,7 +695,8 @@ public class MassReceipt{
         			List<Cell> row2 = new ArrayList<Cell>();
 
     				if(item.getDatum().getTime() >= beginnDate.getTime() && item.getDatum().getTime() <= endDate.getTime()){
-        				row2.add(new Cell(f2, df.format(item.getBetrag())+ "  " +association_data_transfer.getAssociation().getFinacneOffice().getCurrency()));
+        				
+    					row2.add(new Cell(f2, df.format(item.getBetrag())+ "  " +association_data_transfer.getAssociation().getFinacneOffice().getCurrency()));
         				row2.add(new Cell(f2, new RuleBasedNumberFormat(RuleBasedNumberFormat.SPELLOUT).format(item.getBetrag())));
 				
         				SimpleDateFormat dateformatMMDDYYYY = new SimpleDateFormat("dd.MM.yyyy");
@@ -697,7 +727,7 @@ public class MassReceipt{
         table.setColumnWidth(2, 100);
         table.setCellMargin(5.0);
 		
-        table.drawOn(page);		
+        this.summe = sum;	
 	}
 	
 	/**
@@ -736,11 +766,59 @@ public class MassReceipt{
 	 */
 	public void optionA() throws Exception{
 		
+		String row2 = ""; 
+		String tail = "";
+		 
+        if(new_receipt.getObject1().length() > 71) {
+        	            
+    		StringTokenizer tokenizer = new StringTokenizer(new_receipt.getObject1());
+    		
+    		String head = new_receipt.getObject1().substring(0, 71);
+    		
+    		tail = (String)new_receipt.getObject1().subSequence(71, new_receipt.getObject1().length());
+    		
+    		int countSum = tokenizer.countTokens();
+    		
+    		StringTokenizer tokenizer2 = new StringTokenizer(head);
+    		
+    		int countHead = tokenizer2.countTokens();
+    		
+    		StringTokenizer tokenizer3 = new StringTokenizer(tail);
+    		
+    		int countTail = tokenizer3.countTokens();
+    		
+    		if(countSum !=(countHead+countTail))
+    		{
+    			int i = head.lastIndexOf(' ');
+    			
+    			String buffer = head.substring(i+1);
+    			
+    			head = head.replaceAll(buffer, "");
+    			
+    			tail = buffer.concat(tail);
+    		}
+    		
+            row2 = "Wir sind wegen Förderung " + head;
+
+        }else
+        {
+            row2 = "Wir sind wegen Förderung " + new_receipt.getObject1();
+        }
+
         TextLine text2 = new TextLine(f2);  
-        String row2 = "Wir sind wegen Förderung " + new_receipt.getObject1();
+
         text2.setText(row2);
-        text2.setPosition(x, y+=20);
+        text2.setPosition(x, y+=18);
+
         text2.drawOn(page);
+        
+        if(new_receipt.getObject1().length() > 71) {
+	        TextLine text2a = new TextLine(f2);
+	        String row2a = tail;
+	        text2a.setText(row2a);
+	        text2a.setPosition(x, y+=12);
+	        text2a.drawOn(page);
+        }
         
         TextLine text3 = new TextLine(f2);  
         String row3 = "nach dem letzten uns zugegangenen Freistellungsbescheid" +
@@ -752,17 +830,22 @@ public class MassReceipt{
         TextLine text4 = new TextLine(f2);  
         String row4 = "des Finanzamtes "+association_data_transfer.getAssociation().getFinacneOffice().getAdress().getCity()+ "" +
         		", StNr. "+ association_data_transfer.getAssociation().getFinacneOffice().getTaxNumber() +"" +
-        				", vom "+vMMDDYYYY+" nach § 5 Abs. 1 Nr. 9 des Körperschaftsteuergesetzes";
+        				", vom "+vMMDDYYYY+" nach § 5 Abs. 1 Nr. 9";
         text4.setText(row4);
         text4.setPosition(x, y+=12);
         text4.drawOn(page);
         
         TextLine text5 = new TextLine(f2);  
-        String row5 = "von der Körperschaftsteuer und nach § 3 Nr. 6 des Gewerbesteuergesetzes von der " +
-        				"Gewerbesteuer befreit.";
+        String row5 = "des Körperschaftsteuergesetzes von der Körperschaftsteuer und nach § 3 Nr. 6 des Gewerbesteuergesetzes";
         text5.setText(row5);
         text5.setPosition(x, y+=12);
         text5.drawOn(page);
+        
+        TextLine text6 = new TextLine(f2);  
+        String row5a = "von der Gewerbesteuer befreit.";
+        text6.setText(row5a);
+        text6.setPosition(x, y+=12);
+        text6.drawOn(page);
 	}
 	
 	/**
@@ -772,21 +855,65 @@ public class MassReceipt{
 	 */
 	public void optionB() throws Exception{
        
+		String row2 = ""; 
+		String tail = "";
+		 
+        if(new_receipt.getObject2().length() > 71) {
+        	
+    		StringTokenizer tokenizer = new StringTokenizer(new_receipt.getObject2());
+    		
+    		String head = new_receipt.getObject2().substring(0, 71);
+    		
+    		tail = (String)new_receipt.getObject2().subSequence(71, new_receipt.getObject2().length());
+    		
+    		int countSum = tokenizer.countTokens();
+    		
+    		StringTokenizer tokenizer2 = new StringTokenizer(head);
+    		
+    		int countHead = tokenizer2.countTokens();
+    		
+    		StringTokenizer tokenizer3 = new StringTokenizer(tail);
+    		
+    		int countTail = tokenizer3.countTokens();
+    		
+    		if(countSum !=(countHead+countTail))
+    		{
+    			int i = head.lastIndexOf(' ');
+    			
+    			String buffer = head.substring(i+1);
+    			
+    			head = head.replaceAll(buffer, "");
+    			
+    			tail = buffer.concat(tail);
+    		}
+    		
+            row2 = "Wir sind wegen Förderung " + head;
+        }else
+        {
+            row2 = "Wir sind wegen Förderung " + new_receipt.getObject2();
+        }
 		TextLine text2 = new TextLine(f2);  
-        String row2 = "Wir sind wegen Förderung " + new_receipt.getObject2();
         text2.setText(row2);
-        text2.setPosition(x, y+=20);
+        text2.setPosition(x, y+=18);
         text2.drawOn(page);
+        
+        if(new_receipt.getObject2().length() > 71) {
+	        TextLine text2a = new TextLine(f2);  
+	        String row2a = tail;
+	        text2a.setText(row2a);
+	        text2a.setPosition(x, y+=12);
+	        text2a.drawOn(page);
+        }
         
         TextLine text3 = new TextLine(f2);  
         String row3 = "durch vorläufige Bescheinigung des Finanzamt "+association_data_transfer.getAssociation().getFinacneOffice().getAdress().getCity()+", " +
-        		"StNr. "+association_data_transfer.getAssociation().getFinacneOffice().getTaxNumber()+ ",  vom "+vMMDDYYYY+" ab "+aMMDDYYYY+" ";
+        		"StNr. "+association_data_transfer.getAssociation().getFinacneOffice().getTaxNumber()+",";
         text3.setText(row3);
         text3.setPosition(x, y+=12);
         text3.drawOn(page);
         
         TextLine text4 = new TextLine(f2);  
-        String row4 = "als steuerbegünstigten Zwecken dienend anerkannt.";
+        String row4 = "vom "+vMMDDYYYY+" ab "+aMMDDYYYY+" als steuerbegünstigten Zwecken dienend anerkannt.";
         text4.setText(row4);
         text4.setPosition(x, y+=12);
         text4.drawOn(page);
@@ -799,24 +926,64 @@ public class MassReceipt{
 	 */
 	public void OptionC() throws Exception{
 		
+		String row2 = "";
+		String tail = "";
+		 
+        if(new_receipt.getObject3().length() > 50) {
+        	
+    		StringTokenizer tokenizer = new StringTokenizer(new_receipt.getObject2());
+    		
+    		String head = new_receipt.getObject3().substring(0, 50);
+    		
+    		tail = (String)new_receipt.getObject3().subSequence(50, new_receipt.getObject3().length());
+    		
+    		int countSum = tokenizer.countTokens();
+    		
+    		StringTokenizer tokenizer2 = new StringTokenizer(head);
+    		
+    		int countHead = tokenizer2.countTokens();
+    		
+    		StringTokenizer tokenizer3 = new StringTokenizer(tail);
+    		
+    		int countTail = tokenizer3.countTokens();
+    		
+    		if(countSum !=(countHead+countTail))
+    		{
+    			int i = head.lastIndexOf(' ');
+    			
+    			String buffer = head.substring(i+1);
+    			
+    			head = head.replaceAll(buffer, "");
+    			
+    			tail = buffer.concat(tail);
+    		}
+    		
+    		row2 = "Es wird bestätigt, dass die Zuwendung nur zur Förderung " + head;
+        }
+        else
+        {
+            row2 = "Es wird bestätigt, dass die Zuwendung nur zur Förderung " + new_receipt.getObject2();
+        }
+    		
 		TextLine text2 = new TextLine(f2);  
-        String row2 = "Es wird bestätigt, dass die Zuwendung nur zur Förderung " + new_receipt.getObject3();
         text2.setText(row2);
-        text2.setPosition(x, y+=20);
+        text2.setPosition(x, y+=18);
         text2.drawOn(page);
         
-		TextLine text7 = new TextLine(f2);  
-        String row7 = "verwendet wird.";
-        text7.setText(row7);
-        text7.setPosition(x, y+=12);
-        text7.drawOn(page);
-        
+        if(new_receipt.getObject3().length() > 50) {
+        	
+			TextLine text7 = new TextLine(f2);  
+	        String row7 = tail+" verwendet wird.";
+	        text7.setText(row7);
+	        text7.setPosition(x, y+=12);
+	        text7.drawOn(page);
+        }
         if(new_receipt.getBase2() == 1){
         	
     		TextLine text8 = new TextLine(f8);  
             String row8 = "Nur für steuerbegünstigte Einrichtungen, bei denen die Mitgliedsbeiträge steuerlich nicht ";
             text8.setText(row8);
-            text8.setPosition(x, y+=20);
+            text8.setPosition(x, y+=12);
             text8.drawOn(page);
             
     		TextLine text9 = new TextLine(f8);  
@@ -828,7 +995,7 @@ public class MassReceipt{
     		TextLine text3 = new TextLine(f2);  
             String row3 = "Es wird bestätigt, dass es sich nicht um einen Mitgliedsbeitrag i.S.v § 10 b Abs. 1 Satz 2";
             text3.setText(row3);
-            text3.setPosition(x, y+=20);
+            text3.setPosition(x, y+=12);
             text3.drawOn(page);
             
     		TextLine text4 = new TextLine(f2);  
@@ -839,14 +1006,14 @@ public class MassReceipt{
         }
         
 		if(association_data_transfer.getAssociation().getLogo() == 2 && image_signature != null || association_data_transfer.getAssociation().getLogo() == 3 && image_signature != null){
-			image_signature.setPosition(x, y+=5);
+			image_signature.setPosition(x, y+=2);
 			image_signature.drawOn(page);
 		}
         
 		TextLine text5 = new TextLine(f9);  
         String row5 = "__________________________________________________";
         text5.setText(row5);
-        text5.setPosition(x, y += 50);
+        text5.setPosition(x, y += 40);
         text5.drawOn(page);
         
 		TextLine text6 = new TextLine(f9);  

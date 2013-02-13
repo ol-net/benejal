@@ -69,6 +69,7 @@ public class MassMailView extends JPanel implements Observer{
     
     protected DesignGridLayout layout;
 	
+	@SuppressWarnings("rawtypes")
 	protected JComboBox combobox;
 	
 	// JButton
@@ -84,6 +85,7 @@ public class MassMailView extends JPanel implements Observer{
 	protected AssociationDataTransfer association_data_transfer;
 	protected KassenBuch money_book;
 	
+	@SuppressWarnings("rawtypes")
 	protected JComboBox by;
 	
 	protected JScrollPane scrollPane;
@@ -163,6 +165,7 @@ public class MassMailView extends JPanel implements Observer{
 		add(mainpanel, BorderLayout.CENTER);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void createView(){
 		table_panel = new JPanel();
 		table_panel.setLayout(new BorderLayout());

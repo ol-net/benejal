@@ -86,11 +86,11 @@ public class AddDonatorAccountActionListener implements ActionListener{
 				    test_donator = association_data_transfer.getDonatorByName(association_donator.getFirstName(), association_donator.getLastName(), Long.valueOf(association_donator.getAccount().getAccountNumber()).longValue(), Long.valueOf(association_donator.getAccount().getBankCodeNumber()).longValue());
 				
 					if (test_donator != null){
-						new InfoDialog("Dieser Spender bereits vorhanden!");
+						new InfoDialog("Dieser Spender ist bereits vorhanden!");
 					}else {
 						association_data_transfer.insertNewDonator(association_donator);
 		        
-						this.managemember = new ManageMembers(mainframe, 2, new Member(), association_donator, money_book, association_data_transfer);
+						this.managemember = new ManageMembers(mainframe, 2, null, new DonatorWithAdress(), money_book, association_data_transfer);
 				
 						mainframe.removePane();
 						mainframe.addTabbedPanel(managemember);

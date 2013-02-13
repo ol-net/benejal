@@ -80,7 +80,7 @@ public class UpdateAssociationConfig extends RegisterAssociationConfig{
 		
 		GridBagConstraints b = new GridBagConstraints();
 		b.fill=GridBagConstraints.HORIZONTAL;
-		b.insets =new Insets(6,4,2,2);
+		b.insets =new Insets(4,4,2,2);
 		b.gridx=0;
 		b.gridy=0;
 		buttonpanel.add(butpanel, b);

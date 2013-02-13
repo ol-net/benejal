@@ -43,6 +43,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.toedter.calendar.JCalendar;
+
 import association.model.AssociationDataTransfer;
 import association.model.Group;
 
@@ -65,6 +67,8 @@ public class MassDonationReceipt extends JPanel implements Observer{
 	
 	protected static final long serialVersionUID = 1L;
 	protected JTextArea textArea;
+	
+	protected JCalendar calendar;
 	
 	protected JTextField textfield1;
 	protected JTextField textfield2;
@@ -98,11 +102,12 @@ public class MassDonationReceipt extends JPanel implements Observer{
     
 	protected DesignGridLayout layout;
 	
+	@SuppressWarnings("rawtypes")
 	protected JComboBox combobox;
 	
 	// JButton
-	protected JButton next_button;
-	protected JButton back_button;
+	private JButton next_button;
+	private JButton back_button;
 	
 	protected MView allmailview;
 	
@@ -113,6 +118,8 @@ public class MassDonationReceipt extends JPanel implements Observer{
 	protected AssociationDataTransfer association_data_transfer;
 	protected KassenBuch money_book;
 	
+	private int donationDate;
+	
 	/**
 	 * constructor creates receipt view
 	 * 
@@ -121,6 +128,9 @@ public class MassDonationReceipt extends JPanel implements Observer{
 	 * @param adatatrans
 	 */
 	public MassDonationReceipt(MView amailview){
+		
+		calendar = new JCalendar();
+		donationDate = calendar.getYearChooser().getValue();
 		
 		setLayout(new BorderLayout());
 		setOpaque(false);
@@ -131,11 +141,18 @@ public class MassDonationReceipt extends JPanel implements Observer{
 		this.allmailview = amailview;
 		
 		createView();
-
+ 
 		next_button = new ButtonDesign("images/create_pdf_icon.png");
 		next_button.addActionListener(new ReceiptActionListener(allmailview, this, money_book, association_data_transfer));
 		back_button = new ButtonDesign("images/back_icon.png");
 		back_button.addActionListener(new ReceiptActionListener(allmailview, this, money_book, association_data_transfer));
+		
+		calendar.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+			
+			public void propertyChange(java.beans.PropertyChangeEvent evt) {
+		    	setDonationDate();
+			}
+		});
 		
 		GridBagConstraints b = new GridBagConstraints();
 		b.fill=GridBagConstraints.HORIZONTAL;
@@ -158,7 +175,19 @@ public class MassDonationReceipt extends JPanel implements Observer{
 		b.gridy=0;
 		buttonpanel.add(combobox, b);
 		
+		b.gridx=4;
+		b.gridy=0;
+		buttonpanel.add(new JLabel("   für das Jahr:"), b);
+
+		b.gridx=5;
+		b.gridy=0;
+		buttonpanel.add(calendar.getYearChooser(), b);
+		
 		createButPanel();
+	}
+	
+	public void setDonationDate() {
+    	this.donationDate = calendar.getYearChooser().getValue();
 	}
 	
 	public MassDonationReceipt(){}
@@ -185,6 +214,7 @@ public class MassDonationReceipt extends JPanel implements Observer{
 		add(mainpanel, BorderLayout.CENTER);
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void createView(){
 		table_panel = new JPanel();
 		table_panel.setLayout(new BorderLayout());
@@ -413,6 +443,7 @@ public class MassDonationReceipt extends JPanel implements Observer{
 		combobox = new JComboBox(mgroup);
 	    
 		layout.row().grid(new JLabel("Bescheinigungarchiv:"), 3).add(table_panel);
+		
 	}
 	
 	@Override
@@ -647,5 +678,14 @@ public class MassDonationReceipt extends JPanel implements Observer{
 	 */
 	public ButtonGroup getButtonGroup3(){
 		return checkBoxGroup3;
+	}
+	
+	/**
+	 * donation date
+	 * 
+	 * @return
+	 */
+	public int getDonationDate() {
+		return donationDate;
 	}
 }

@@ -106,7 +106,7 @@ public class UpdateAssociationGroup extends RegisterAssociationGroup {
 		
 		GridBagConstraints b = new GridBagConstraints();
 		b.fill=GridBagConstraints.HORIZONTAL;
-		b.insets =new Insets(75,1,2,2);
+		b.insets =new Insets(70,1,2,2);
 		
 		b.gridx=0;
 		b.gridy=0;

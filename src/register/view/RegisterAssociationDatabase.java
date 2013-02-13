@@ -158,7 +158,7 @@ public class RegisterAssociationDatabase extends BackgroundPanel{
 		configurationpanel.setOpaque(false);
 		
 		config_layout = new DesignGridLayout(configurationpanel);
-		makeConfigBlank(config_layout);
+		//makeConfigBlank(config_layout);
 		
 		buttonpanel = new JPanel();
 		buttonpanel.setLayout(new GridBagLayout());
@@ -166,7 +166,7 @@ public class RegisterAssociationDatabase extends BackgroundPanel{
 		
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill=GridBagConstraints.HORIZONTAL;
-		c.insets =new Insets(30,2,2,2);
+		c.insets =new Insets(86,2,2,2);
 		
 		c.gridx=0;
 		c.gridy=0;

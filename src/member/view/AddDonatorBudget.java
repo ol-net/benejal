@@ -77,7 +77,9 @@ public class AddDonatorBudget extends JPanel{
 	private JTextField member_accountowner;
 	private JTextField member_accountnumber;
 	private JTextField member_bankcode;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_group;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_status;
 	
 	// JButton
@@ -93,7 +95,9 @@ public class AddDonatorBudget extends JPanel{
 	// Textfields
 
 	private JTextField member_value;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_date_payment;
+	@SuppressWarnings("rawtypes")
 	private JComboBox member_payment_form;
 	
 	private SpecialContribution special_contribution;
@@ -240,6 +244,7 @@ public class AddDonatorBudget extends JPanel{
 	 * 
 	 * @param layout
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void makeBlankContribution(DesignGridLayout layout){
 		
 		String[] d_payment = {"keine Spenden", "monatlich", "quartalweise", "halbjährlich", "jährlich"};
@@ -251,7 +256,8 @@ public class AddDonatorBudget extends JPanel{
 		comboboxpanel.setOpaque(false);
 		
 	    ActionListener actionListener = new ActionListener() {
-	        public void actionPerformed(ActionEvent event) {		
+	        
+			public void actionPerformed(ActionEvent event) {		
 
 	    		String[] d_payment = {"keine Spenden", "monatlich", "quartalweise", "halbjährlich", "jährlich"};
 	    		String[] d_payment1 = {"keine Spenden", "einmalig"};

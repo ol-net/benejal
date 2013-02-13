@@ -81,7 +81,7 @@ public class UpdateAssociationDatabase extends RegisterAssociationDatabase{
 		
 		GridBagConstraints b = new GridBagConstraints();
 		b.fill=GridBagConstraints.HORIZONTAL;
-		b.insets =new Insets(4,1,2,2);
+		b.insets =new Insets(6,1,2,2);
 		b.gridx=0;
 		b.gridy=0;
 		buttonpanel.add(butpanel, b);

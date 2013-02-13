@@ -32,7 +32,9 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import member.model.Donator;
+import member.model.DonatorWithAdress;
 import member.model.Member;
+import association.model.Account;
 import moneybook.model.KassenBuch;
 import moneybook.model.Payment;
 import net.java.dev.designgridlayout.DesignGridLayout;
@@ -42,6 +44,7 @@ import payments.controller.VerbuchenFrameCloseListener;
 import payments.model.KontoauszugTableModel;
 import utils.dokuments.LengthDocument;
 import association.model.AssociationDataTransfer;
+import association.view.InfoDialog;
 
 /**
  * Repräsentiert GUI eines Einnahme-Panels
@@ -90,6 +93,7 @@ public class EinnahmePanel extends PaymentPanel {
 	private JRadioButton otherButton;
 	
 	private JButton searchBtn;
+	private JButton createDonatorBtn;
 	private JButton saveBtn;
 	private JButton closeBtn;
 	
@@ -122,6 +126,9 @@ public class EinnahmePanel extends PaymentPanel {
 	
 	private AssociationDataTransfer associationDataTransfer;
 	private Payment payment;
+	
+	private DonatorWithAdress association_donator;
+	private Account donatorAccount;
 	
 	// TODO Das Panel soll die Person kennen, der eine Zahlung zugeordnet werden soll
 	// Zurzeit kennt das Panel nur die Personnummer!!!
@@ -197,7 +204,6 @@ public class EinnahmePanel extends PaymentPanel {
 		this.zweckTxt.setText(z.getZweck());
 		this.zweckTxt.setEditable(false);
 		
-		
 		ownerLbl = new JLabel(owner);
 		
 		ownerFeld = new JTextField();
@@ -206,6 +212,22 @@ public class EinnahmePanel extends PaymentPanel {
 		searchBtn = new JButton("Suchen...");
 		
 		searchBtn.addActionListener (new SearchPersonListener());
+		
+		createDonatorBtn = new JButton("Spender anlegen");
+		createDonatorBtn.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent arg0) {
+				
+				//create Donator 
+				
+				insertNewDonator();
+				
+				// show windows for booking with new donator
+				//new SearchPersonListener();
+				
+			}
+			
+		});
 		
 		donatorType = new JCheckBox(member);
 		donatorType.setOpaque(false);
@@ -267,9 +289,33 @@ public class EinnahmePanel extends PaymentPanel {
 		lay.row().grid().add(projectLbl).add(projectBox).add();
 		lay.row().grid().add(bookingAreaLbl).add(bookingAreaBox).add();
 		
-		lay.row().center().add(ownerLbl).add(ownerFeld).add(donatorType).add(searchBtn);
+		lay.row().center().add(ownerLbl).add(ownerFeld).add(donatorType).add(searchBtn).add(createDonatorBtn);
 		lay.row().center().add(saveBtn).add(closeBtn);
 		
+	}
+
+	public void insertNewDonator() {
+		
+		association_donator = new DonatorWithAdress();
+		
+		association_donator.setLastName(nameLbl.getText());
+		
+		donatorAccount = new Account();
+		donatorAccount.setAccountNumber(ktoLbl.getText());
+		donatorAccount.setBankCodeNumber(blzLbl.getText());
+		
+		association_donator.setAccount(donatorAccount);
+		
+	    DonatorWithAdress test_donator = associationDataTransfer.getDonatorByName(association_donator.getFirstName(), association_donator.getLastName(), Long.valueOf(association_donator.getAccount().getAccountNumber()).longValue(), Long.valueOf(association_donator.getAccount().getBankCodeNumber()).longValue());
+		
+		if (test_donator != null) {
+			new InfoDialog("Dieser Spender ist bereits vorhanden!");
+		}else {	
+			this.associationDataTransfer.insertNewDonator(association_donator);
+			this.setDonation();
+			new InfoDialog("Neuen Spender Angelegt!");
+		}
+
 	}
 	
 
@@ -385,11 +431,13 @@ public class EinnahmePanel extends PaymentPanel {
 		bookingAreaBox.setSelectedIndex(1);
 		bookingAreaBox.setEnabled(false);
 		searchBtn.setEnabled(true);
+		createDonatorBtn.setEnabled(true);
 	}
 	
 	private void setOther() {
 		// Sonstige
 		donatorType.setEnabled(false);
+		createDonatorBtn.setEnabled(false);
 		searchBtn.setEnabled(false);
 		ownerFeld.setText("-");
 		projectBox.setModel(projectBox_1.getModel());
